@@ -7,84 +7,52 @@ struct Node {
     Node(int val) : data(val), next(nullptr) {}
 };
 
-class LinkedList {
-private:
-    Node* head;
-
-public:
-    LinkedList() : head(nullptr) {}
-
-    ~LinkedList() {
-        while (head != nullptr) {
-            Node* temp = head;
-            head = head->next;
-            delete temp;
-        }
+Node* append(Node* head, int val) {
+    if (head == nullptr) {
+        return new Node(val);
     }
+    head->next = append(head->next, val);
+    return head;
+}
 
-    void append(int val) {
-        Node* newNode = new Node(val);
-        if (head == nullptr) {
-            head = newNode;
-            return;
-        }
-        Node* temp = head;
-        while (temp->next != nullptr) {
-            temp = temp->next;
-        }
-        temp->next = newNode;
+Node* remove(Node* head, int val) {
+    if (head == nullptr) {
+        return nullptr;
     }
-
-    void remove(int val) {
-        if (head == nullptr) return;
-
-        if (head->data == val) {
-            Node* temp = head;
-            head = head->next;
-            delete temp;
-            return;
-        }
-
-        Node* current = head;
-        Node* previous = nullptr;
-
-        while (current != nullptr && current->data != val) {
-            previous = current;
-            current = current->next;
-        }
-
-        if (current != nullptr) {
-            previous->next = current->next;
-            delete current;
-        }
+    if (head->data == val) {
+        Node* temp = head->next;
+        delete head;
+        return temp;
     }
+    head->next = remove(head->next, val);
+    return head;
+}
 
-    void display() const {
-        Node* temp = head;
-        while (temp != nullptr) {
-            std::cout << temp->data << " -> ";
-            temp = temp->next;
-        }
+void display(Node* head) {
+    if (head == nullptr) {
         std::cout << "nullptr" << std::endl;
+        return;
     }
-};
+    std::cout << head->data << " -> ";
+    display(head->next);
+}
 
 int main() {
-    LinkedList list;
+    Node* list = nullptr;
 
-    list.append(10);
-    list.append(20);
-    list.append(30);
-    list.display(); // Muestra: 10 -> 20 -> 30 -> nullptr
+    list = append(list, 10);
+    list = append(list, 20);
+    list = append(list, 30);
+    display(list);
 
-    list.remove(20);
-    list.display(); // Muestra: 10 -> 30 -> nullptr
+    list = remove(list, 20);
+    display(list);
 
-    list.remove(10);
-    list.display(); // Muestra: 30 -> nullptr
+    list = remove(list, 10);
+    display(list);
 
-    list.remove(30);
-    list.display(); // Muestra: nullptr
+    list = remove(list, 30);
+    display(list);
 
     return 0;
 }
